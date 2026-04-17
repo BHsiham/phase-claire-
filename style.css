@@ -5,12 +5,15 @@ body {
     background-color: #1a1a1a;
     overflow: hidden;
     user-select: none;
+    /* Ajout tactile : Empêche les gestes de navigation du navigateur */
+    touch-action: none; 
 }
 
 #game-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    width: 100vw;
 }
 
 .zone {
@@ -34,6 +37,9 @@ body {
     border-top: 4px solid #1b5e20;
     border-bottom: 4px solid #1b5e20;
     z-index: 2;
+    /* Mobile : Empêche le chevauchement */
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 .lumen { 
@@ -61,7 +67,8 @@ body {
 
 /* --- COMPLEXES PROTÉIQUES --- */
 .complex {
-    width: 85px;
+    width: 11%; /* Adapté pour tenir à 8 sur une ligne */
+    max-width: 85px;
     height: 110px;
     background: #43a047;
     border: 3px solid #1b5e20;
@@ -77,6 +84,8 @@ body {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 5;
     text-align: center;
+    /* Tactile : priorité au clic/drag */
+    touch-action: none;
 }
 
 .complex:hover { transform: scale(1.08); background: #4caf50; }
@@ -120,13 +129,13 @@ body {
 }
 
 .proton-particle.stroma-h {
-    background: #ff8a80; /* Plus clair dans le stroma */
+    background: #ff8a80;
 }
 
 .electron-particle {
     position: absolute;
-    width: 22px;
-    height: 22px;
+    width: 28px; /* Un peu plus grand pour faciliter le clic mobile */
+    height: 28px;
     background: #ffeb3b;
     color: black;
     border-radius: 50%;
@@ -139,19 +148,14 @@ body {
     cursor: grab;
     z-index: 20;
     border: 2px solid #fbc02d;
-}
-
-.electron-particle:active { cursor: grabbing; }
-
-.oxygen-particle {
-    position: absolute;
-    font-weight: 900;
-    color: #00e5ff;
-    text-shadow: 0 0 8px rgba(255,255,255,0.8);
-    z-index: 15;
+    touch-action: none;
 }
 
 /* --- ÉLÉMENTS INTERACTIFS --- */
+.light-beam, #h2o-source, .draggable-product {
+    touch-action: none; /* Crucial pour le drag tactile */
+}
+
 .light-beam {
     width: 75px;
     height: 40px;
@@ -181,17 +185,18 @@ body {
 #ui-panel {
     background: #111;
     color: white;
-    padding: 15px 30px;
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-top: 3px solid #333;
-    height: 80px;
+    height: auto;
+    min-height: 80px;
 }
 
 .controls-group, .stats-group {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     align-items: center;
 }
 
@@ -199,30 +204,64 @@ body {
     background: #333;
     color: white;
     border: 1px solid #555;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.2s;
 }
-
-.btn-ui:hover { background: #555; border-color: #888; }
-.btn-ui:active { transform: translateY(2px); }
 
 .stat {
     font-family: monospace;
-    font-size: 1.2em;
+    font-size: 1.1em;
     background: #222;
-    padding: 5px 15px;
+    padding: 5px 10px;
     border-radius: 4px;
     border-left: 4px solid #4caf50;
 }
 
 #instruction {
-    font-size: 1.1em;
-    max-width: 500px;
+    font-size: 1em;
+    flex: 1;
+    margin: 0 15px;
     text-align: center;
     font-style: italic;
+    color: #ffd740;
+}
+
+/* --- MODIFICATIONS SPÉCIFIQUES MOBILE (RÉDUCTION) --- */
+@media screen and (max-width: 768px) {
+    .complex {
+        height: 70px;
+        font-size: 0.7em;
+        border-width: 2px;
+    }
+    #t1, #t2, #t3 {
+        width: 35px;
+        height: 35px;
+    }
+    #atp-synthase {
+        height: 90px;
+        padding-top: 15px;
+    }
+    .light-beam {
+        width: 55px;
+        font-size: 0.7em;
+    }
+    #ui-panel {
+        flex-direction: column;
+        gap: 5px;
+        padding: 5px;
+    }
+    #instruction {
+        font-size: 0.8em;
+        margin: 5px 0;
+    }
+    .stat {
+        font-size: 0.8em;
+    }
+    .label-zone {
+        font-size: 0.7em;
+    }
 }
 
 /* --- ANIMATIONS --- */
@@ -231,7 +270,6 @@ body {
     50% { transform: translateY(-12px); }
 }
 
-/* Animation lors du pompage E2 */
 .pumping-animation {
     animation: pumpMove 1s forwards ease-in;
 }
@@ -242,7 +280,6 @@ body {
     100% { transform: translateY(60px); opacity: 1; }
 }
 
-/* Animation de rotation pour l'ATP Synthase */
 .spin-enzyme {
     animation: spin 0.5s linear;
 }
