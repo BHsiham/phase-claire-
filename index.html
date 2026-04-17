@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Chain Interactive - Phase Claire (Optimisé)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-container">
+        <div class="zone stroma" id="stroma">
+            <span class="label-zone">STROMA (pH ~8)</span>
+            
+            <div id="light-shelf">
+                <div class="light-beam" id="light-green" draggable="true" style="background: #4caf50;">500nm</div>
+                <div class="light-beam" id="light-680" draggable="true" style="background: #ff5252; box-shadow: 0 0 10px #ff5252;">680nm</div>
+                <div class="light-beam" id="light-700" draggable="true" style="background: #d32f2f; box-shadow: 0 0 10px #d32f2f;">700nm</div>
+            </div>
+
+            <div id="nadp-target" class="draggable-product" draggable="true">NADP+</div>
+        </div>
+
+        <div class="zone membrane" id="membrane">
+            <div class="complex drop-target" id="ps2" title="Photosystème II">PSII</div>
+            <div class="complex drop-target" id="t1" title="Plastoquinone">T1</div>
+            <div class="complex drop-target" id="e2" title="Complexe b6f">E2</div>
+            <div class="complex drop-target" id="t2" title="Plastocyanine">T2</div>
+            <div class="complex drop-target" id="ps1" title="Photosystème I">PSI</div>
+            <div class="complex drop-target" id="t3" title="Ferrédoxine">T3</div>
+            <div class="complex drop-target" id="e3" title="NADP réductase">E3</div>
+            
+            <div class="complex" id="atp-synthase" title="ATP Synthase">ATP Synthase</div>
+        </div>
+
+        <div class="zone lumen" id="lumen">
+            <span class="label-zone">LUMEN (pH ~5)</span>
+            
+            <div id="h2o-source" class="draggable" draggable="true">H2O</div>
+            
+            <div id="adp-pi" class="draggable-product" draggable="true" style="display:none; background:#ffa726; border-color: #e65100;">ADP + Pi</div>
+        </div>
+
+        <div id="ui-panel">
+            <div class="controls-group">
+                <button onclick="reinitialiser()" class="btn-ui">🔄 Réinitialiser</button>
+                <button onclick="reculerEtape()" class="btn-ui">⬅️ Reculer</button>
+            </div>
+
+            <div class="stats-group">
+                <div class="stat">ATP : <span id="atp-count">0</span></div>
+                <div class="stat">NADPH,H+ : <span id="nadph-count">0</span></div>
+            </div>
+
+            <div id="instruction-container">
+                <div id="instruction">Étape 1 : Glissez le faisceau 680nm sur le PSII pour commencer.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

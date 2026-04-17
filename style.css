@@ -1,0 +1,253 @@
+/* --- BASE & LAYOUT --- */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a1a1a;
+    overflow: hidden;
+    user-select: none;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.zone {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* --- DESIGN DES ÉTAGES (STROMA / MEMBRANE / LUMEN) --- */
+.stroma { 
+    height: 30%; 
+    background: #fffde7; 
+    border-bottom: 2px solid #fbc02d; 
+}
+
+.membrane { 
+    height: 35%; 
+    background: linear-gradient(180deg, #66bb6a 0%, #2e7d32 50%, #66bb6a 100%);
+    border-top: 4px solid #1b5e20;
+    border-bottom: 4px solid #1b5e20;
+    z-index: 2;
+}
+
+.lumen { 
+    height: 35%; 
+    background: #e3f2fd; 
+    transition: background 1.5s ease, box-shadow 1.5s ease;
+}
+
+/* État saturé quand le gradient est élevé */
+.lumen.saturated {
+    background-color: #fff9c4 !important;
+    box-shadow: inset 0 0 80px rgba(255, 235, 59, 0.4);
+}
+
+.label-zone {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 1.1em;
+    font-weight: 900;
+    color: rgba(0,0,0,0.15);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* --- COMPLEXES PROTÉIQUES --- */
+.complex {
+    width: 85px;
+    height: 110px;
+    background: #43a047;
+    border: 3px solid #1b5e20;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 5;
+    text-align: center;
+}
+
+.complex:hover { transform: scale(1.08); background: #4caf50; }
+
+/* Transporteurs mobiles */
+#t1, #t2, #t3 {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%;
+    background: #fb8c00; 
+    border: 3px solid #e65100;
+}
+
+/* ATP Synthase spécifique */
+#atp-synthase {
+    height: 150px;
+    background: #ffb74d;
+    clip-path: polygon(20% 0%, 80% 0%, 80% 60%, 100% 60%, 100% 100%, 0% 100%, 0% 60%, 20% 60%);
+    border: none;
+    color: #5d4037;
+    padding-top: 40px;
+}
+
+/* --- PARTICULES --- */
+.proton-particle {
+    position: absolute;
+    background: #f44336;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.75em;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+    z-index: 8;
+    animation: float 3s infinite ease-in-out;
+    pointer-events: none;
+}
+
+.proton-particle.stroma-h {
+    background: #ff8a80; /* Plus clair dans le stroma */
+}
+
+.electron-particle {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: #ffeb3b;
+    color: black;
+    border-radius: 50%;
+    font-size: 0.8em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    box-shadow: 0 0 15px #ffff00;
+    cursor: grab;
+    z-index: 20;
+    border: 2px solid #fbc02d;
+}
+
+.electron-particle:active { cursor: grabbing; }
+
+.oxygen-particle {
+    position: absolute;
+    font-weight: 900;
+    color: #00e5ff;
+    text-shadow: 0 0 8px rgba(255,255,255,0.8);
+    z-index: 15;
+}
+
+/* --- ÉLÉMENTS INTERACTIFS --- */
+.light-beam {
+    width: 75px;
+    height: 40px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    transition: transform 0.2s;
+}
+
+#h2o-source, .draggable-product {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: grab;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+#h2o-source { background: #2196f3; color: white; border: 2px solid #1976d2; }
+.draggable-product { background: #ce93d8; color: #4a148c; border: 2px solid #7b1fa2; }
+
+/* --- UI PANEL & BOUTONS --- */
+#ui-panel {
+    background: #111;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 3px solid #333;
+    height: 80px;
+}
+
+.controls-group, .stats-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-ui {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-ui:hover { background: #555; border-color: #888; }
+.btn-ui:active { transform: translateY(2px); }
+
+.stat {
+    font-family: monospace;
+    font-size: 1.2em;
+    background: #222;
+    padding: 5px 15px;
+    border-radius: 4px;
+    border-left: 4px solid #4caf50;
+}
+
+#instruction {
+    font-size: 1.1em;
+    max-width: 500px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+/* Animation lors du pompage E2 */
+.pumping-animation {
+    animation: pumpMove 1s forwards ease-in;
+}
+
+@keyframes pumpMove {
+    0% { transform: translateY(-100px); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translateY(60px); opacity: 1; }
+}
+
+/* Animation de rotation pour l'ATP Synthase */
+.spin-enzyme {
+    animation: spin 0.5s linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg) scale(1.1); }
+    to { transform: rotate(360deg) scale(1); }
+}
