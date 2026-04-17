@@ -2,9 +2,45 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Bio-Chain Interactive - Phase Claire (Optimisé)</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.0/DragDropTouch.js"></script>
+    
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Empêche le rebond de la page et le scroll accidentel pendant le drag */
+        html, body {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            touch-action: none;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Force la chaîne à rester sur une seule ligne et à réduire la taille si nécessaire */
+        .membrane {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            justify-content: space-evenly !important;
+            align-items: center;
+            padding: 0 2px;
+        }
+
+        /* Assure que tous les éléments interactifs répondent au doigt sans délai */
+        .light-beam, .draggable, .draggable-product, .electron-particle, .complex {
+            touch-action: none !important;
+            -webkit-user-drag: element;
+        }
+    </style>
 </head>
 <body>
 
@@ -30,7 +66,7 @@
             <div class="complex drop-target" id="t3" title="Ferrédoxine">T3</div>
             <div class="complex drop-target" id="e3" title="NADP réductase">E3</div>
             
-            <div class="complex" id="atp-synthase" title="ATP Synthase">ATP Synthase</div>
+            <div class="complex" id="atp-synthase" title="ATP Synthase">ATP Syn</div>
         </div>
 
         <div class="zone lumen" id="lumen">
@@ -43,17 +79,17 @@
 
         <div id="ui-panel">
             <div class="controls-group">
-                <button onclick="reinitialiser()" class="btn-ui">🔄 Réinitialiser</button>
-                <button onclick="reculerEtape()" class="btn-ui">⬅️ Reculer</button>
+                <button onclick="reinitialiser()" class="btn-ui">🔄</button>
+                <button onclick="reculerEtape()" class="btn-ui">⬅️</button>
             </div>
 
             <div class="stats-group">
-                <div class="stat">ATP : <span id="atp-count">0</span></div>
-                <div class="stat">NADPH,H+ : <span id="nadph-count">0</span></div>
+                <div class="stat">ATP: <span id="atp-count">0</span></div>
+                <div class="stat">NADPH: <span id="nadph-count">0</span></div>
             </div>
 
             <div id="instruction-container">
-                <div id="instruction">Étape 1 : Glissez le faisceau 680nm sur le PSII pour commencer.</div>
+                <div id="instruction">Étape 1 : Glissez le 680nm sur le PSII.</div>
             </div>
         </div>
     </div>
