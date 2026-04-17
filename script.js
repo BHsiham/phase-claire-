@@ -129,16 +129,13 @@ function actualiserInstruction() {
 function setupInteractions() {
     const sequence = ['ps2', 't1', 'e2', 't2', 'ps1', 't3', 'e3'];
 
-    // Capture des éléments sources
     const sources = document.querySelectorAll('.light-beam, #h2o-source, #nadp-target, #adp-pi, .electron-particle');
     const targets = document.querySelectorAll('.complex, #atp-synthase');
 
     sources.forEach(el => {
-        // Drag standard
         el.addEventListener('dragstart', e => {
             selectElement(el, e.dataTransfer);
         });
-        // Mode tactile : sélection par clic
         el.addEventListener('click', () => {
             document.querySelectorAll('.light-beam, .draggable, .draggable-product, .electron-particle').forEach(i => i.style.outline = "");
             el.style.outline = "3px solid #ffeb3b";
@@ -150,11 +147,9 @@ function setupInteractions() {
         target.addEventListener('dragover', e => e.preventDefault());
         target.addEventListener('drop', e => processAction(target, e.dataTransfer));
         
-        // Mode tactile : action par clic sur la cible
         target.addEventListener('click', () => {
             if (selectedItem) {
                 processAction(target, null);
-                // Reset sélection visuelle
                 sources.forEach(i => i.style.outline = "");
                 selectedItem = null;
             }
@@ -176,61 +171,24 @@ function selectElement(el, dataTransfer) {
         data = { item: item };
         if(dataTransfer) dataTransfer.setData('item', item);
     }
-    selectedItem = data; // Sauvegarde pour le mode clic
+    selectedItem = data;
 }
 
 function processAction(target, dataTransfer) {
     const sequence = ['ps2', 't1', 'e2', 't2', 'ps1', 't3', 'e3'];
     
-    // Récupère les données soit du drag, soit du clic précédent
     const wave = dataTransfer ? dataTransfer.getData('wavelength') : selectedItem?.wavelength;
     const item = dataTransfer ? dataTransfer.getData('item') : selectedItem?.item;
     const type = dataTransfer ? dataTransfer.getData('type') : selectedItem?.type;
 
-    // 1. Lumière sur PSII
     if (target.id === 'ps2' && wave === 'light-680') {
         sauvegarderEtat();
         state.photon680 = true;
         actualiserInstruction();
     }
-    // 2. Photolyse H2O
     else if (target.id === 'ps2' && item === 'h2o' && state.photon680) {
         sauvegarderEtat();
         document.getElementById('h2o-source').style.display = 'none';
         creerOxygene();
         creerProtonLumen(true); creerProtonLumen(true);
-        state.protonsLumen += 2;
-        creerElectron('electron-mobile', 'ps2', 'electron');
-        actualiserInstruction();
-    }
-    // 3. Lumière sur PSI
-    else if (target.id === 'ps1' && wave === 'light-700') {
-        sauvegarderEtat();
-        state.photon700 = true;
-        creerElectron('electron-psi-active', 'ps1', 'electron-excité');
-        actualiserInstruction();
-    }
-    // 4. Mouvement Électrons
-    else if (type === 'electron' || type === 'electron-excité') {
-        const eImg = document.getElementById(type === 'electron' ? 'electron-mobile' : 'electron-psi-active');
-        const nextIdx = sequence.indexOf(target.id);
-        const currIdx = sequence.indexOf(state.electronPos);
-
-        if (nextIdx === currIdx + 1) {
-            if (target.id === 'ps1' && !state.photon700) return alert("Le PSI doit être excité !");
-            if (state.electronPos === 'e2' && !state.e2Pumped) return alert("Pompez d'abord les protons !");
-            
-            sauvegarderEtat();
-            target.appendChild(eImg);
-            state.electronPos = target.id;
-            if (target.id === 'e2') gererControleEtape();
-            actualiserInstruction();
-        }
-    }
-    // 5. Réduction NADP+
-    else if (target.id === 'e3' && item === 'nadp' && state.electronPos === 'e3') {
-        sauvegarderEtat();
-        state.nadphProduced++;
-        document.getElementById('nadph-count').innerText = state.nadphProduced;
-        if(document.getElementById('electron-psi-active')) document.getElementById('electron-psi-active').remove();
-        for(let i=0; i<8; i++) setTimeout(() => { creerProtonLumen(true); state.protons
+        state.protonsLumen += 2
