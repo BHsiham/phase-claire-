@@ -5,8 +5,9 @@ body {
     background-color: #1a1a1a;
     overflow: hidden;
     user-select: none;
-    /* Ajout tactile : Empêche les gestes de navigation du navigateur */
+    /* Empêche les gestes natifs qui bloquent le drag */
     touch-action: none; 
+    -webkit-overflow-scrolling: none;
 }
 
 #game-container {
@@ -24,7 +25,7 @@ body {
     align-items: center;
 }
 
-/* --- DESIGN DES ÉTAGES (STROMA / MEMBRANE / LUMEN) --- */
+/* --- DESIGN DES ÉTAGES --- */
 .stroma { 
     height: 30%; 
     background: #fffde7; 
@@ -36,8 +37,7 @@ body {
     background: linear-gradient(180deg, #66bb6a 0%, #2e7d32 50%, #66bb6a 100%);
     border-top: 4px solid #1b5e20;
     border-bottom: 4px solid #1b5e20;
-    z-index: 2;
-    /* Mobile : Empêche le chevauchement */
+    z-index: 1; /* Baissé pour laisser les particules passer devant */
     display: flex;
     flex-wrap: nowrap;
 }
@@ -45,13 +45,7 @@ body {
 .lumen { 
     height: 35%; 
     background: #e3f2fd; 
-    transition: background 1.5s ease, box-shadow 1.5s ease;
-}
-
-/* État saturé quand le gradient est élevé */
-.lumen.saturated {
-    background-color: #fff9c4 !important;
-    box-shadow: inset 0 0 80px rgba(255, 235, 59, 0.4);
+    transition: background 1.5s ease;
 }
 
 .label-zone {
@@ -60,14 +54,14 @@ body {
     left: 15px;
     font-size: 1.1em;
     font-weight: 900;
-    color: rgba(0,0,0,0.15);
+    color: rgba(0,0,0,0.1);
     text-transform: uppercase;
-    letter-spacing: 2px;
+    pointer-events: none; /* Ne bloque pas le clic */
 }
 
 /* --- COMPLEXES PROTÉIQUES --- */
 .complex {
-    width: 11%; /* Adapté pour tenir à 8 sur une ligne */
+    width: 11%;
     max-width: 85px;
     height: 110px;
     background: #43a047;
@@ -77,83 +71,36 @@ body {
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 0.9em;
     font-weight: bold;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 5;
-    text-align: center;
-    /* Tactile : priorité au clic/drag */
     touch-action: none;
+    text-align: center;
 }
 
-.complex:hover { transform: scale(1.08); background: #4caf50; }
-
-/* Transporteurs mobiles */
-#t1, #t2, #t3 {
-    width: 50px; 
-    height: 50px; 
-    border-radius: 50%;
-    background: #fb8c00; 
-    border: 3px solid #e65100;
-}
-
-/* ATP Synthase spécifique */
-#atp-synthase {
-    height: 150px;
-    background: #ffb74d;
-    clip-path: polygon(20% 0%, 80% 0%, 80% 60%, 100% 60%, 100% 100%, 0% 100%, 0% 60%, 20% 60%);
-    border: none;
-    color: #5d4037;
-    padding-top: 40px;
-}
-
-/* --- PARTICULES --- */
-.proton-particle {
-    position: absolute;
-    background: #f44336;
-    color: white;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.75em;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
-    z-index: 8;
-    animation: float 3s infinite ease-in-out;
-    pointer-events: none;
-}
-
-.proton-particle.stroma-h {
-    background: #ff8a80;
+/* --- ÉLÉMENTS INTERACTIFS (Z-INDEX PRIORITAIRE) --- */
+.electron-particle, 
+.light-beam, 
+#h2o-source, 
+.draggable-product {
+    z-index: 999 !important; /* Force la priorité absolue sur le toucher */
+    touch-action: none !important;
+    cursor: grab;
 }
 
 .electron-particle {
     position: absolute;
-    width: 28px; /* Un peu plus grand pour faciliter le clic mobile */
-    height: 28px;
+    width: 30px; /* Plus grand pour le doigt */
+    height: 30px;
     background: #ffeb3b;
     color: black;
     border-radius: 50%;
-    font-size: 0.8em;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 900;
     box-shadow: 0 0 15px #ffff00;
-    cursor: grab;
-    z-index: 20;
     border: 2px solid #fbc02d;
-    touch-action: none;
-}
-
-/* --- ÉLÉMENTS INTERACTIFS --- */
-.light-beam, #h2o-source, .draggable-product {
-    touch-action: none; /* Crucial pour le drag tactile */
 }
 
 .light-beam {
@@ -165,126 +112,76 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: grab;
-    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 #h2o-source, .draggable-product {
     padding: 10px 20px;
     border-radius: 25px;
     font-weight: bold;
-    cursor: grab;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    z-index: 10;
 }
 
 #h2o-source { background: #2196f3; color: white; border: 2px solid #1976d2; }
 .draggable-product { background: #ce93d8; color: #4a148c; border: 2px solid #7b1fa2; }
 
-/* --- UI PANEL & BOUTONS --- */
+/* --- PARTICULES DÉCO (Z-INDEX BAS) --- */
+.proton-particle {
+    position: absolute;
+    background: #f44336;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.7em;
+    z-index: 2;
+    pointer-events: none; /* Important : ne doit pas intercepter le clic */
+}
+
+/* --- UI PANEL --- */
 #ui-panel {
     background: #111;
     color: white;
-    padding: 10px 20px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-top: 3px solid #333;
-    height: auto;
-    min-height: 80px;
-}
-
-.controls-group, .stats-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+    z-index: 1000;
 }
 
 .btn-ui {
     background: #333;
     color: white;
-    border: 1px solid #555;
-    padding: 8px 12px;
+    padding: 10px 15px;
     border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
+    border: 1px solid #555;
+    font-size: 1.2em;
 }
 
-.stat {
-    font-family: monospace;
-    font-size: 1.1em;
-    background: #222;
-    padding: 5px 10px;
-    border-radius: 4px;
-    border-left: 4px solid #4caf50;
-}
-
-#instruction {
-    font-size: 1em;
-    flex: 1;
-    margin: 0 15px;
-    text-align: center;
-    font-style: italic;
-    color: #ffd740;
-}
-
-/* --- MODIFICATIONS SPÉCIFIQUES MOBILE (RÉDUCTION) --- */
+/* --- MOBILE OPTIMISATION --- */
 @media screen and (max-width: 768px) {
-    .complex {
-        height: 70px;
-        font-size: 0.7em;
-        border-width: 2px;
-    }
-    #t1, #t2, #t3 {
-        width: 35px;
-        height: 35px;
-    }
-    #atp-synthase {
-        height: 90px;
-        padding-top: 15px;
-    }
-    .light-beam {
-        width: 55px;
-        font-size: 0.7em;
-    }
-    #ui-panel {
-        flex-direction: column;
-        gap: 5px;
-        padding: 5px;
-    }
-    #instruction {
-        font-size: 0.8em;
-        margin: 5px 0;
-    }
-    .stat {
-        font-size: 0.8em;
-    }
-    .label-zone {
-        font-size: 0.7em;
-    }
+    .complex { height: 75px; font-size: 0.7em; }
+    #atp-synthase { height: 100px; padding-top: 15px; }
+    .light-beam { width: 60px; height: 35px; font-size: 0.8em; }
+    #ui-panel { flex-direction: column; height: auto; gap: 5px; }
+    .stat { font-size: 0.9em; }
 }
 
 /* --- ANIMATIONS --- */
 @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+    50% { transform: translateY(-10px); }
 }
 
 .pumping-animation {
-    animation: pumpMove 1s forwards ease-in;
+    animation: pumpMove 0.8s forwards ease-in;
 }
 
 @keyframes pumpMove {
-    0% { transform: translateY(-100px); opacity: 0; }
-    30% { opacity: 1; }
-    100% { transform: translateY(60px); opacity: 1; }
-}
-
-.spin-enzyme {
-    animation: spin 0.5s linear;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg) scale(1.1); }
-    to { transform: rotate(360deg) scale(1); }
+    0% { transform: translateY(-80px); opacity: 0; }
+    100% { transform: translateY(40px); opacity: 1; }
 }
